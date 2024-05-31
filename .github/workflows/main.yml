@@ -1,0 +1,56 @@
+name: CICD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+permissions:
+  id-token: write
+  pages: write
+  contents: read
+  
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest    
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:    
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!      
+
+        
+      # lägg till create csv file (glöm inte pip install)
+      # lägg till Create JSON file
+      # Köra ehnetstester     
+      #python .\calculateTests.py 
+      - name: install faker
+        run: pip install faker
+        
+      - name: create csv file
+        run: python generate.py
+
+      - name: Convert CSV to JSON 
+        run: python csvtojson.py
+    
+      - name: Tester
+        run: python tester.py
+
+      - name: Copy to dist
+        run: |
+          mkdir dist
+          cp index.html dist/index.html
+          cp data.json dist/data.json
+          cp script.js dist/script.js      
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'dist'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
