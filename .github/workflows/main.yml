@@ -37,7 +37,7 @@ jobs:
         run: python csvtojson.py
     
       - name: Tester
-        run: python tester.py
+        run: python Tester.py
 
       - name: Copy to dist
         run: |
